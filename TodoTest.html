@@ -34,6 +34,8 @@
             height: 100dvh;
             overflow: hidden;
             background-color: #f3f4f6;
+            overscroll-behavior: none;
+            touch-action: pan-x pan-y;
         }
 
         html.dark, html.dark body {
@@ -56,6 +58,34 @@
             display: flex;
             flex-direction: column;
             overflow: hidden;
+        }
+
+        /* Prevent overscroll bounce */
+        .overscroll-none {
+            overscroll-behavior: none;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        /* Hide scrollbar when not needed */
+        .scrollbar-auto {
+            overflow-y: auto;
+        }
+
+        .scrollbar-auto::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .scrollbar-auto::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .scrollbar-auto::-webkit-scrollbar-thumb {
+            background: rgba(128, 128, 128, 0.3);
+            border-radius: 3px;
+        }
+
+        .scrollbar-auto::-webkit-scrollbar-thumb:hover {
+            background: rgba(128, 128, 128, 0.5);
         }
 
         /* Animations */
@@ -231,7 +261,7 @@
     </div>
 
     <!-- Todo List -->
-    <div class="bg-gray-100 dark:bg-[#1c1c1e] flex-1 p-4 sm:p-6 overflow-y-auto min-h-0">
+    <div id="todoListContainer" class="bg-gray-100 dark:bg-[#1c1c1e] flex-1 p-4 sm:p-6 min-h-0 overscroll-none overflow-hidden">
         <div id="todoList" class="space-y-3">
             <!-- Todos will be rendered here -->
         </div>
@@ -662,13 +692,20 @@
     function renderTodos() {
         const filteredTodos = getFilteredTodos();
         const todoList = document.getElementById('todoList');
+        const todoListContainer = document.getElementById('todoListContainer');
         const emptyState = document.getElementById('emptyState');
 
         if (filteredTodos.length === 0) {
             todoList.innerHTML = '';
             emptyState.classList.remove('hidden');
+            // Disable scrolling when empty
+            todoListContainer.classList.remove('overflow-y-auto');
+            todoListContainer.classList.add('overflow-hidden');
         } else {
             emptyState.classList.add('hidden');
+            // Enable scrolling when has content
+            todoListContainer.classList.remove('overflow-hidden');
+            todoListContainer.classList.add('overflow-y-auto');
             todoList.innerHTML = filteredTodos.map(todo => {
                 // Determine background color based on priority and completion
                 let bgClass = '';
