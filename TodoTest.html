@@ -27,7 +27,8 @@
     </script>
     <style>
 
-        html {
+        #ios-statusbar-fix {
+            height: env(safe-area-inset-top);
             background: linear-gradient(to bottom right, #eff6ff, #e0e7ff);
         }
 
@@ -71,6 +72,9 @@
         }
     </style>
 </head>
+
+<div id="ios-statusbar-fix"></div>
+
 <body class="font-sf bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-black min-h-screen transition-colors duration-300">
 
 <div class="min-h-screen flex flex-col">
