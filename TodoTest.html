@@ -7,7 +7,7 @@
 
     <!-- PWA Meta Tags -->
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <meta name="apple-mobile-web-app-title" content="Aufgaben">
     <meta name="theme-color" content="#1f2937" id="theme-color-meta">
     <meta name="description" content="Deine persönliche Todo-Liste im Apple Style">
@@ -26,17 +26,30 @@
         }
     </script>
     <style>
-        /* Ensure background extends to ALL edges including safe areas */
+        /* Solid background colors for proper status bar integration */
         html, body {
-            background: linear-gradient(to bottom right, #eff6ff, #e0e7ff);
-            min-height: 100%;
-            min-height: 100dvh;
             margin: 0;
             padding: 0;
+            min-height: 100%;
+            min-height: 100dvh;
         }
 
-        html.dark, html.dark body {
+        html {
+            background-color: #eff6ff;
+        }
+
+        html.dark {
+            background-color: #1f2937;
+        }
+
+        body {
+            background: linear-gradient(to bottom right, #eff6ff, #e0e7ff);
+            background-attachment: fixed;
+        }
+
+        html.dark body {
             background: linear-gradient(to bottom right, #1f2937, #111827);
+            background-attachment: fixed;
         }
 
         /* Safe area padding for notched devices */
@@ -46,18 +59,6 @@
 
         .safe-area-bottom {
             padding-bottom: env(safe-area-inset-bottom, 0px);
-        }
-
-        /* Extend background behind status bar and home indicator */
-        body::before {
-            content: '';
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            z-index: -1;
-            background: inherit;
         }
 
         /* Glassmorphism */
@@ -703,7 +704,6 @@
                 return `
                     <div class="slide-in flex items-center gap-3 p-4 rounded-2xl shadow-sm hover:shadow-md transition-all duration-200 ${bgClass} ${borderClass}" data-id="${todo.id}">
 
-                <!-- Checkbox -->
                 <input
                 type="checkbox"
                 ${todo.completed ? 'checked' : ''}
@@ -711,7 +711,6 @@
                 class="w-6 h-6 flex-shrink-0 rounded-full border-2 border-gray-300 dark:border-gray-600 checked:bg-blue-500 checked:border-blue-500 cursor-pointer transition-all duration-200"
                 >
 
-                    <!-- Text + Weekday Badge -->
 
                 <div class="flex-1 min-w-0">
                 <div class="flex items-center gap-2 flex-wrap">
