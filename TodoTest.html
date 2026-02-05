@@ -2,14 +2,14 @@
 <html lang="de">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>Aufgaben</title>
 
     <!-- PWA Meta Tags -->
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="Aufgaben">
-    <meta name="theme-color" content="#667eea">
+    <meta name="theme-color" content="#4f46e5" id="theme-color-meta">
     <meta name="description" content="Deine persönliche Todo-Liste im Apple Style">
 
     <script src="https://cdn.tailwindcss.com"></script>
@@ -26,16 +26,33 @@
         }
     </script>
     <style>
+        /* Ensure background extends to status bar area */
+        html {
+            background: linear-gradient(to bottom right, #eff6ff, #e0e7ff);
+        }
 
-        /* Glassmorphism*/
-        /* .glass {
+        html.dark {
+            background: linear-gradient(to bottom right, #111827, #000000);
+        }
+
+        /* Safe area padding for notched devices */
+        .safe-area-top {
+            padding-top: env(safe-area-inset-top, 0px);
+        }
+
+        .safe-area-bottom {
+            padding-bottom: env(safe-area-inset-bottom, 0px);
+        }
+
+        /* Glassmorphism */
+        .glass {
             background: rgba(255, 255, 255, 0.7);
             backdrop-filter: blur(10px);
             -webkit-backdrop-filter: blur(10px);
         }
         .dark .glass {
             background: rgba(28, 28, 30, 0.7);
-        } /
+        }
 
         /* Animations */
         @keyframes slideIn {
@@ -70,7 +87,7 @@
 
 <body class="font-sf bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-black min-h-screen transition-colors duration-300">
 
-<div class="min-h-screen flex flex-col">
+<div class="min-h-screen flex flex-col safe-area-top safe-area-bottom">
 
     <!-- Header -->
     <div class="glass p-4 sm:p-6">
@@ -343,6 +360,7 @@
         const toggle = document.getElementById('darkModeToggle');
         const toggleBg = document.getElementById('toggleBg');
         const toggleCircle = document.getElementById('toggleCircle');
+        const themeColorMeta = document.getElementById('theme-color-meta');
 
         if (darkMode) {
             document.documentElement.classList.add('dark');
@@ -350,12 +368,16 @@
             toggleBg.classList.remove('bg-gray-300');
             toggleBg.classList.add('bg-blue-500');
             toggleCircle.style.transform = 'translateX(24px)';
+            // Update theme-color for dark mode
+            themeColorMeta.setAttribute('content', '#111827');
         } else {
             document.documentElement.classList.remove('dark');
             toggle.checked = false;
             toggleBg.classList.remove('bg-blue-500');
             toggleBg.classList.add('bg-gray-300');
             toggleCircle.style.transform = 'translateX(0)';
+            // Update theme-color for light mode
+            themeColorMeta.setAttribute('content', '#eff6ff');
         }
     }
 
@@ -685,11 +707,7 @@
                 ${!todo.completed && todo.weekday ? `
 
                                     <span class="inline-flex items-center px-2 py-0.5 text-xs bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 rounded-full whitespace-nowrap flex-shrink-0">
-                                        📅 $
-                {
-                    getWeekdayName(todo.weekday)
-                }
-
+                                        📅 ${getWeekdayName(todo.weekday)}
                                     </span>
 
                 ` : ''}
@@ -702,11 +720,7 @@
 
                         <div class="relative">
                             <button
-                                onclick="toggleTodoSettings($
-                {
-                    todo.id
-                }
-            )"
+                                onclick="toggleTodoSettings(${todo.id})"
                                 class="p-2 text-2xl text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-xl transition-all duration-200 active:scale-95 touch-manipulation"
                                 title="Einstellungen"
                             >
@@ -714,88 +728,20 @@
                             </button>
 
                             <!-- Popup Menu -->
-                            <div id="settings-$
-                {
-                    todo.id
-                }
-            " class="hidden absolute right-0 top-12 bg-white dark:bg-gray-800 rounded-2xl shadow-2xl border border-gray-200 dark:border-gray-700 p-4 z-50 min-w-[280px]">
+                            <div id="settings-${todo.id}" class="hidden absolute right-0 top-12 bg-white dark:bg-gray-800 rounded-2xl shadow-2xl border border-gray-200 dark:border-gray-700 p-4 z-50 min-w-[280px]">
                                 <div class="space-y-4">
                                     <!-- Weekday Section -->
                                     <div>
                                         <h4 class="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Wochentag</h4>
                                         <div class="grid grid-cols-4 gap-1">
-                                            <button onclick="setWeekdayFromPopup($
-                {
-                    todo.id
-                }
-            , 'monday')" class="weekday-option px-2 py-2 text-xs rounded-lg $
-                {
-                    todo.weekday === 'monday' ? 'bg-blue-500 text-white' : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300'
-                }
-             hover:bg-blue-400 hover:text-white transition-all touch-manipulation">Mo</button>
-                                            <button onclick="setWeekdayFromPopup($
-                {
-                    todo.id
-                }
-            , 'tuesday')" class="weekday-option px-2 py-2 text-xs rounded-lg $
-                {
-                    todo.weekday === 'tuesday' ? 'bg-blue-500 text-white' : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300'
-                }
-             hover:bg-blue-400 hover:text-white transition-all touch-manipulation">Di</button>
-                                            <button onclick="setWeekdayFromPopup($
-                {
-                    todo.id
-                }
-            , 'wednesday')" class="weekday-option px-2 py-2 text-xs rounded-lg $
-                {
-                    todo.weekday === 'wednesday' ? 'bg-blue-500 text-white' : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300'
-                }
-             hover:bg-blue-400 hover:text-white transition-all touch-manipulation">Mi</button>
-                                            <button onclick="setWeekdayFromPopup($
-                {
-                    todo.id
-                }
-            , 'thursday')" class="weekday-option px-2 py-2 text-xs rounded-lg $
-                {
-                    todo.weekday === 'thursday' ? 'bg-blue-500 text-white' : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300'
-                }
-             hover:bg-blue-400 hover:text-white transition-all touch-manipulation">Do</button>
-                                            <button onclick="setWeekdayFromPopup($
-                {
-                    todo.id
-                }
-            , 'friday')" class="weekday-option px-2 py-2 text-xs rounded-lg $
-                {
-                    todo.weekday === 'friday' ? 'bg-blue-500 text-white' : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300'
-                }
-             hover:bg-blue-400 hover:text-white transition-all touch-manipulation">Fr</button>
-                                            <button onclick="setWeekdayFromPopup($
-                {
-                    todo.id
-                }
-            , 'saturday')" class="weekday-option px-2 py-2 text-xs rounded-lg $
-                {
-                    todo.weekday === 'saturday' ? 'bg-blue-500 text-white' : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300'
-                }
-             hover:bg-blue-400 hover:text-white transition-all touch-manipulation">Sa</button>
-                                            <button onclick="setWeekdayFromPopup($
-                {
-                    todo.id
-                }
-            , 'sunday')" class="weekday-option px-2 py-2 text-xs rounded-lg $
-                {
-                    todo.weekday === 'sunday' ? 'bg-blue-500 text-white' : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300'
-                }
-             hover:bg-blue-400 hover:text-white transition-all touch-manipulation">So</button>
-                                            <button onclick="setWeekdayFromPopup($
-                {
-                    todo.id
-                }
-            , null)" class="weekday-option px-2 py-2 text-xs rounded-lg $
-                {
-                    !todo.weekday ? 'bg-gray-400 text-white' : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300'
-                }
-             hover:bg-gray-400 hover:text-white transition-all touch-manipulation">❌</button>
+                                            <button onclick="setWeekdayFromPopup(${todo.id}, 'monday')" class="weekday-option px-2 py-2 text-xs rounded-lg ${todo.weekday === 'monday' ? 'bg-blue-500 text-white' : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300'} hover:bg-blue-400 hover:text-white transition-all touch-manipulation">Mo</button>
+                                            <button onclick="setWeekdayFromPopup(${todo.id}, 'tuesday')" class="weekday-option px-2 py-2 text-xs rounded-lg ${todo.weekday === 'tuesday' ? 'bg-blue-500 text-white' : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300'} hover:bg-blue-400 hover:text-white transition-all touch-manipulation">Di</button>
+                                            <button onclick="setWeekdayFromPopup(${todo.id}, 'wednesday')" class="weekday-option px-2 py-2 text-xs rounded-lg ${todo.weekday === 'wednesday' ? 'bg-blue-500 text-white' : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300'} hover:bg-blue-400 hover:text-white transition-all touch-manipulation">Mi</button>
+                                            <button onclick="setWeekdayFromPopup(${todo.id}, 'thursday')" class="weekday-option px-2 py-2 text-xs rounded-lg ${todo.weekday === 'thursday' ? 'bg-blue-500 text-white' : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300'} hover:bg-blue-400 hover:text-white transition-all touch-manipulation">Do</button>
+                                            <button onclick="setWeekdayFromPopup(${todo.id}, 'friday')" class="weekday-option px-2 py-2 text-xs rounded-lg ${todo.weekday === 'friday' ? 'bg-blue-500 text-white' : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300'} hover:bg-blue-400 hover:text-white transition-all touch-manipulation">Fr</button>
+                                            <button onclick="setWeekdayFromPopup(${todo.id}, 'saturday')" class="weekday-option px-2 py-2 text-xs rounded-lg ${todo.weekday === 'saturday' ? 'bg-blue-500 text-white' : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300'} hover:bg-blue-400 hover:text-white transition-all touch-manipulation">Sa</button>
+                                            <button onclick="setWeekdayFromPopup(${todo.id}, 'sunday')" class="weekday-option px-2 py-2 text-xs rounded-lg ${todo.weekday === 'sunday' ? 'bg-blue-500 text-white' : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300'} hover:bg-blue-400 hover:text-white transition-all touch-manipulation">So</button>
+                                            <button onclick="setWeekdayFromPopup(${todo.id}, null)" class="weekday-option px-2 py-2 text-xs rounded-lg ${!todo.weekday ? 'bg-gray-400 text-white' : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300'} hover:bg-gray-400 hover:text-white transition-all touch-manipulation">❌</button>
                                         </div>
                                     </div>
 
@@ -803,42 +749,14 @@
                                     <div>
                                         <h4 class="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Priorität</h4>
                                         <div class="flex gap-2">
-                                            <button onclick="setPriorityFromPopup($
-                {
-                    todo.id
-                }
-            , 'medium')" class="flex-1 px-3 py-2 text-sm rounded-lg $
-                {
-                    todo.priority === 'medium' ? 'bg-yellow-400 text-white' : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300'
-                }
-             hover:bg-yellow-400 hover:text-white transition-all touch-manipulation">⚠️ Mittel</button>
-                                            <button onclick="setPriorityFromPopup($
-                {
-                    todo.id
-                }
-            , 'high')" class="flex-1 px-3 py-2 text-sm rounded-lg $
-                {
-                    todo.priority === 'high' ? 'bg-red-400 text-white' : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300'
-                }
-             hover:bg-red-400 hover:text-white transition-all touch-manipulation">🔴 Hoch</button>
-                                            <button onclick="setPriorityFromPopup($
-                {
-                    todo.id
-                }
-            , 'none')" class="px-3 py-2 text-sm rounded-lg $
-                {
-                    todo.priority === 'none' ? 'bg-gray-400 text-white' : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300'
-                }
-             hover:bg-gray-400 hover:text-white transition-all touch-manipulation">❌</button>
+                                            <button onclick="setPriorityFromPopup(${todo.id}, 'medium')" class="flex-1 px-3 py-2 text-sm rounded-lg ${todo.priority === 'medium' ? 'bg-yellow-400 text-white' : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300'} hover:bg-yellow-400 hover:text-white transition-all touch-manipulation">⚠️ Mittel</button>
+                                            <button onclick="setPriorityFromPopup(${todo.id}, 'high')" class="flex-1 px-3 py-2 text-sm rounded-lg ${todo.priority === 'high' ? 'bg-red-400 text-white' : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300'} hover:bg-red-400 hover:text-white transition-all touch-manipulation">🔴 Hoch</button>
+                                            <button onclick="setPriorityFromPopup(${todo.id}, 'none')" class="px-3 py-2 text-sm rounded-lg ${todo.priority === 'none' ? 'bg-gray-400 text-white' : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300'} hover:bg-gray-400 hover:text-white transition-all touch-manipulation">❌</button>
                                         </div>
                                     </div>
 
                                     <!-- Close Button -->
-                                    <button onclick="toggleTodoSettings($
-                {
-                    todo.id
-                }
-            )" class="w-full px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-all touch-manipulation font-medium">
+                                    <button onclick="toggleTodoSettings(${todo.id})" class="w-full px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-all touch-manipulation font-medium">
                                         Fertig
                                     </button>
                                 </div>
@@ -856,89 +774,88 @@
                 🗑️
                 </button>
                 </div>
-                `
-            ;
-                }).join('');
+                `;
+            }).join('');
             }
 
-            updateStats();
-        }
-
-        function updateStats() {
-            document.getElementById('totalCount').textContent = todos.length;
-            document.getElementById('activeCount').textContent = todos.filter(t => !t.completed).length;
-            document.getElementById('completedCount').textContent = todos.filter(t => t.completed).length;
-        }
-
-        // Initialize on load
-        if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', init);
-        } else {
-            init();
-        }
-
-        // Generate App Icon dynamically
-        function generateAppIcon() {
-            const canvas = document.createElement('canvas');
-            canvas.width = 180;
-            canvas.height = 180;
-            const ctx = canvas.getContext('2d');
-
-            // Gradient background
-            const gradient = ctx.createLinearGradient(0, 0, 180, 180);
-            gradient.addColorStop(0, '#667eea');
-            gradient.addColorStop(1, '#764ba2');
-            ctx.fillStyle = gradient;
-
-            // Rounded rectangle
-            ctx.beginPath();
-            ctx.roundRect(0, 0, 180, 180, 40);
-            ctx.fill();
-
-            // White circle (subtle background)
-            ctx.fillStyle = 'rgba(255, 255, 255, 0.2)';
-            ctx.beginPath();
-            ctx.arc(90, 85, 50, 0, Math.PI * 2);
-            ctx.fill();
-
-            // Checkmark
-            ctx.strokeStyle = 'white';
-            ctx.lineWidth = 12;
-            ctx.lineCap = 'round';
-            ctx.lineJoin = 'round';
-            ctx.beginPath();
-            ctx.moveTo(60, 85);
-            ctx.lineTo(80, 105);
-            ctx.lineTo(120, 65);
-            ctx.stroke();
-
-            // Convert to data URL and set as apple-touch-icon
-            const iconUrl = canvas.toDataURL('image/png');
-
-            // Create or update apple-touch-icon link
-            let appleTouchIcon = document.querySelector('link[rel="apple-touch-icon"]');
-            if (!appleTouchIcon) {
-                appleTouchIcon = document.createElement('link');
-                appleTouchIcon.rel = 'apple-touch-icon';
-                document.head.appendChild(appleTouchIcon);
+                updateStats();
             }
-            appleTouchIcon.href = iconUrl;
 
-            // Also set as favicon
-            let favicon = document.querySelector('link[rel="icon"]');
-            if (!favicon) {
-                favicon = document.createElement('link');
-                favicon.rel = 'icon';
-                document.head.appendChild(favicon);
-            }
-            favicon.href = iconUrl;
+                function updateStats() {
+                    document.getElementById('totalCount').textContent = todos.length;
+                    document.getElementById('activeCount').textContent = todos.filter(t => !t.completed).length;
+                    document.getElementById('completedCount').textContent = todos.filter(t => t.completed).length;
+                }
 
-            console.log('📱 App Icon generiert');
-        }
+                // Initialize on load
+                if (document.readyState === 'loading') {
+                    document.addEventListener('DOMContentLoaded', init);
+                } else {
+                    init();
+                }
 
-        // Generate icon on load
-        generateAppIcon();
-    </script>
+                // Generate App Icon dynamically
+                function generateAppIcon() {
+                    const canvas = document.createElement('canvas');
+                    canvas.width = 180;
+                    canvas.height = 180;
+                    const ctx = canvas.getContext('2d');
+
+                    // Gradient background
+                    const gradient = ctx.createLinearGradient(0, 0, 180, 180);
+                    gradient.addColorStop(0, '#667eea');
+                    gradient.addColorStop(1, '#764ba2');
+                    ctx.fillStyle = gradient;
+
+                    // Rounded rectangle
+                    ctx.beginPath();
+                    ctx.roundRect(0, 0, 180, 180, 40);
+                    ctx.fill();
+
+                    // White circle (subtle background)
+                    ctx.fillStyle = 'rgba(255, 255, 255, 0.2)';
+                    ctx.beginPath();
+                    ctx.arc(90, 85, 50, 0, Math.PI * 2);
+                    ctx.fill();
+
+                    // Checkmark
+                    ctx.strokeStyle = 'white';
+                    ctx.lineWidth = 12;
+                    ctx.lineCap = 'round';
+                    ctx.lineJoin = 'round';
+                    ctx.beginPath();
+                    ctx.moveTo(60, 85);
+                    ctx.lineTo(80, 105);
+                    ctx.lineTo(120, 65);
+                    ctx.stroke();
+
+                    // Convert to data URL and set as apple-touch-icon
+                    const iconUrl = canvas.toDataURL('image/png');
+
+                    // Create or update apple-touch-icon link
+                    let appleTouchIcon = document.querySelector('link[rel="apple-touch-icon"]');
+                    if (!appleTouchIcon) {
+                        appleTouchIcon = document.createElement('link');
+                        appleTouchIcon.rel = 'apple-touch-icon';
+                        document.head.appendChild(appleTouchIcon);
+                    }
+                    appleTouchIcon.href = iconUrl;
+
+                    // Also set as favicon
+                    let favicon = document.querySelector('link[rel="icon"]');
+                    if (!favicon) {
+                        favicon = document.createElement('link');
+                        favicon.rel = 'icon';
+                        document.head.appendChild(favicon);
+                    }
+                    favicon.href = iconUrl;
+
+                    console.log('📱 App Icon generiert');
+                }
+
+                // Generate icon on load
+                generateAppIcon();
+</script>
 
 </body>
 </html>
