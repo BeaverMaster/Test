@@ -30,8 +30,9 @@
         html, body {
             margin: 0;
             padding: 0;
-            min-height: 100%;
-            min-height: 100dvh;
+            height: 100%;
+            height: 100dvh;
+            overflow: hidden;
             background-color: #f3f4f6;
         }
 
@@ -46,6 +47,15 @@
 
         .safe-area-bottom {
             padding-bottom: env(safe-area-inset-bottom, 0px);
+        }
+
+        /* Main container should fill screen without overflow */
+        .app-container {
+            height: 100%;
+            height: 100dvh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
         }
 
         /* Animations */
@@ -79,12 +89,12 @@
     </style>
 </head>
 
-<body class="font-sf bg-gray-100 dark:bg-[#1c1c1e] min-h-screen transition-colors duration-300">
+<body class="font-sf bg-gray-100 dark:bg-[#1c1c1e] transition-colors duration-300">
 
-<div class="min-h-screen flex flex-col safe-area-top safe-area-bottom">
+<div class="app-container safe-area-top safe-area-bottom">
 
     <!-- Header -->
-    <div class="bg-gray-100 dark:bg-[#1c1c1e] p-4 sm:p-6">
+    <div class="bg-gray-100 dark:bg-[#1c1c1e] p-4 sm:p-6 flex-shrink-0">
         <div class="flex justify-between items-center">
             <div>
                 <h1 class="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-800 dark:text-white mb-1">
@@ -114,7 +124,7 @@
     </div>
 
     <!-- Add Todo Input -->
-    <div class="bg-gray-100 dark:bg-[#1c1c1e] p-4 sm:p-6">
+    <div class="bg-gray-100 dark:bg-[#1c1c1e] p-4 sm:p-6 flex-shrink-0">
         <div class="flex flex-col gap-3">
             <input
                     type="text"
@@ -132,7 +142,7 @@
     </div>
 
     <!-- Weekday Selector -->
-    <div class="bg-gray-100 dark:bg-[#1c1c1e] p-3">
+    <div class="bg-gray-100 dark:bg-[#1c1c1e] p-3 flex-shrink-0">
         <div class="grid grid-cols-8 gap-1">
             <button
                     id="weekday-all"
@@ -194,7 +204,7 @@
     </div>
 
     <!-- Filter Buttons -->
-    <div class="bg-gray-100 dark:bg-[#1c1c1e] p-4 sm:p-5">
+    <div class="bg-gray-100 dark:bg-[#1c1c1e] p-4 sm:p-5 flex-shrink-0">
         <div class="flex gap-2 justify-stretch">
             <button
                     onclick="setFilter('all')"
@@ -221,7 +231,7 @@
     </div>
 
     <!-- Todo List -->
-    <div class="bg-gray-100 dark:bg-[#1c1c1e] flex-1 p-4 sm:p-6 overflow-y-auto">
+    <div class="bg-gray-100 dark:bg-[#1c1c1e] flex-1 p-4 sm:p-6 overflow-y-auto min-h-0">
         <div id="todoList" class="space-y-3">
             <!-- Todos will be rendered here -->
         </div>
@@ -238,7 +248,7 @@
     </div>
 
     <!-- Statistics -->
-    <div class="bg-gray-100 dark:bg-[#1c1c1e] p-4 sm:p-6">
+    <div class="bg-gray-100 dark:bg-[#1c1c1e] p-4 sm:p-6 flex-shrink-0">
         <div class="grid grid-cols-3 gap-4 text-center">
             <div>
                 <div class="text-3xl font-bold text-blue-500 dark:text-blue-400" id="totalCount">0</div>
